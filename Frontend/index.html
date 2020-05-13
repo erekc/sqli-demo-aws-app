@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<link href='https://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet'>
+	<link rel="stylesheet" type="text/css" href="index.css">
+	<meta charset="UTF-8">
+	<title>SQL Injection Demo</title>
+</head>
+<body>
+    <div class="header">
+        <h1>Privacy SQL Injection Demo</h1>
+        <p class="slide-text">Presented by Erek Cox, Joe Skimmons, and Jacob Shiers</p>
+    </div>
+    <div id="carousel-section" class="container w-50 p-3" align="center">
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="3"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="4"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="5"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="6"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="7"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="8"></li>
+                <li data-target="#carouselExampleInidcators" data-slide-to="9"></li>
+            </ol>
+            <div class="carousel-inner">
+                <div class="carousel-item active w-100 p-3">
+                    <h3 class="d-block w-100">Mossack Fonseca and the Panama Papers</h3>
+                    <img src="mossack_fonseca.jpg" class="d-block w-100" alt="mossack fonseca">
+                </div>
+                <div class="carousel-item w-100 p-3">
+                    <h3 class="d-block w-100">Goal</h3>
+                    <p class="slide-text">
+                        In this demonstration, you will be shown two types of SQL Injection attacks:
+                        a Subversion of Application Logic attack and a Hidden Data Retrieval attack.
+                        Although these vulnerabilities are uncommon these days, there still exists
+                        outdated systems, like Mossack Fonseca, that still may present these issues.
+                        The goal of this demonstration is to show what these attacks can do and most
+                        importantly, how to create an application that is not vulnerable to these attacks.
+                    </p>
+                </div>
+                <div class="carousel-item w-100 p-3">
+                    <h3 class="d-block w-100">SQL</h3>
+                    <p class="slide-text">
+                        SQL stands for Structured Query Language and is the syntax used to communicate
+                        with databases. The basic types of communication commands can be categorized as
+                        CRUD operations, or the CREATE, READ, UPDATE, and DELETE operations. Majority
+                        of applications require databases to store information, such as usernames, passwords,
+                        emails, etc., which means that the applications must programmatically interact
+                        with the database to obtain data to perform its functionalities.
+                    </p>
+                </div>
+                <div class="carousel-item w-100 p-3">
+                    <h3 class="d-block w-100">SQL Injection Attacks</h3>
+                    <p class="slide-text">
+                        SQL injection is a web security vulnerability that enables an attacker to 
+                        interfere with queries being made to the database by the application. These
+                        interferences can allow retrieval of data that they are not meant to have,
+                        like other user information or application data, or even delete or modify
+                        underlying data. In extreme cases, SQLi attacks can be escalated to compomise
+                        the underlying backend infrastructure. The attacks in this demo are not of
+                        this magnitude, but will provide and insight into the basics of SQLi.
+                    </p>
+                </div>
+                <div class="carousel-item w-100 p-3">
+                    <h3 class="d-block w-100">SELECT operation</h3>
+                    <p class="slide-text">
+                        This demo will be based off of a simple SELECT SQL statement. The SELECT
+                        statement retrieves data from a database and returns obtained records as
+                        a result-set. The statement can be combined with conditions and other SQL 
+                        operators to create or more complex query to obtain very specific records. 
+                        The demo's query will be simple. The next two attacks will be based on the 
+                        following statement:<br><br>
+                        SELECT * FROM users WHERE username="username" AND password="password"<br><br>
+                        This statement is selecting all attributes of the user from the "users" table 
+                        whose username is "username" and whose password is "password".
+                    </p>
+                </div>
+                <div class="carousel-item w-100 p-3">
+                    <h3 class="d-block w-100">Vulnerable Query Strings</h3>
+                    <p class="slide-text" align="left">
+                        Both examples will exploit the vulnerability in the example implementations
+                        where the username and password input are directly embedded into the query. 
+                        This is very unsafe because the end user indirectly has control over the 
+                        actual query used to obtain information from the database. Below is the 
+                        vulnerable query string constructed in python used in the examples:
+                    </p>
+                    <p class="slide-text" align="left">
+                        sql = "SELECT * FROM users WHERE username = '{}' AND password = '{}';"\<br>
+                        &emsp;&emsp;&emsp;.format(username, password)<br>
+                        cursor.execute(sql)
+                    </p>
+                </div>
+                <div class="carousel-item w-100 p-3">
+                    <h3 class="d-block w-100">Example Injection Query Strings</h3>
+                    <p class="slide-text">Application Logic Subversion attack string:</p><br>
+                    <p class="slide-text">SELECT * FROM users WHERE username = 'Erek'-- 'AND password = 'random'</p><br>
+                    <p class="slide-text">
+                        In SQL, -- denotes the beginning of a comment, which the database engine
+                        doesn't read during execution. As a result, this injection attack commented
+                        out everything after the username input, which means that the attacker can
+                        now obtain info only with the username.
+                    </p>
+                </div>
+                <div class="carousel-item w-100 p-3">
+                    <h3 class="d-block w-100">Example Injection Query Strings</h3>
+                    <p class="slide-text">Hidden Data Retrieval attack string:</p><br>
+                    <p class="slide-text">SELECT * FROM users WHERE username = 'Erek OR 1=1'-- 'AND password = 'random'</p><br>
+                    <p class="slide-text">
+                        This vulnerability also exploits commenting. In this case, a conditional 
+                        operation has been passed into the string, OR 1=1. Because 1 is always equal
+                        to 1, every record in the database qualifies. As a result, the attacker 
+                        can pull every record in the database.
+                    </p>
+                </div>
+                <div class="carousel-item w-100 p-3">
+                    <h3 class="d-block w-100">Injection Attack Prevention</h3>
+                    <p class="slide-text" align="left">
+                        A <bold>Prepared Statement</bold> is a method in which the attacker cannot
+                        interfere with the query's structure. Instead of direct concatenation of 
+                        arguments, SQL libraries offer a functionality that allows arguments to 
+                        be passed as a constant to the desired query string. Here is an example:
+                    </p>
+                    <br>
+                    <p class="slide-text" align="left">
+                        sql = "SELECT * FROM users WHERE username = %s AND password = %s"<br>
+                        cursor.execute(sql, (username, password))
+                    </p>
+                    <br>
+                    <p class="slide-text" align="left">
+                        This seemingly small change from the previous formation makes a big
+                        difference.
+                    </p>
+                </div>
+                <div class="carousel-item w-100 p-3">
+                    <h3 class="d-block w-100">Good Development Practices are Important!</h3>
+                    <p class="slide-text">
+                        These examples show the importance of using good development practices
+                        when building an application. As you can see, a minor change can potentially 
+                        cause a world of hurt. When you're making an application, always make 
+                        sure that you are keeping in mind the many ways an attacker can possibly
+                        break your application you've been working so hard on! Below, you can 
+                        test out the queries to see for yourself!
+                    </p>
+                </div>
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
+    <div id="first-section" align="center">
+        <div id="first-section-desc" align="center"><h4>This is the populated database.</h4></div>
+        <div id="db-records" align="center">
+            <div id="table" class="container w-50 p-3"></div>
+            <div id="userInsert-form" class="container">
+                <form id="db-record-form">
+    				<div class="submit-button" align="center"><button type="button" class="btn btn-primary" onclick="getUsers()">Get all records from users table.</button></div>
+    			</form>
+            </div>
+        </div>
+    </div>
+    <div id="second-section" align="center">
+        <div id="second-section-desc" align="center"><h4>We can add users to the database to populate it.</h4></div>
+        <div id="insert-users" align="center">
+            <div class="container">
+                <form id="insert-user-form">
+                    <div class="form-group">
+                        <label for="userInsert-input">Username to add.</label>
+                        <input type="text" class="form-control" id="userInsert-input" aria-describedby="userInsertHelp" placeholder="Username to Insert">
+                        <small id="userInsertHelp" class="form-text text-muted">Username to insert to database.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="passwordInsert-input">Password to add.</label>
+                        <input type="text" class="form-control" id="passwordInsert-input" aria-describedby="passwordInsertHelp" placeholder="Password to Insert">
+                        <small id="passwordInsertHelp" class="form-text text-muted">Password to insert to database.</small>
+                    </div>
+                    <div class="submit-button" align="center"><button type="button" class="btn btn-primary" onclick="addUser()">Add User</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="third-section" align="center">
+        <div id="third-section-desc" align="center"><h4>Let's see what we get with our SQL injection query.</h4></div>
+        <div id="injection-div" align="center">
+            <div class="container">
+                <form id="user-query-form">
+                    <div class="form-group">
+    					<label for="username-input">Username (with injection)</label>
+    					<input type="text" class="form-control" id="username-input" aria-describedby="usernameHelp" placeholder="Username">
+    					<small id="usernameHelp" class="form-text text-muted">This username will be embedded with an injection attack.</small>
+    				</div>
+    				<div class="form-group">
+    					<label for="password-input">Password (won't really matter because of injection)</label>
+    					<input type="text" class="form-control" id="password-input" aria-describedby="passwordHelp" placeholder="Password">
+    					<small id="passwordHelp" class="form-text text-muted">The password won't matter in either examples because the injection will occur with the username input.</small>
+    				</div>
+    				<div class="submit-button" align="center"><button type="button" class="btn btn-primary" onclick="getInjection()">Get Injection Results</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="fourth-section" align="center">
+        <div id="fouth-section-desc" align="center"><h4>Now we will witness the protection of prepared statements.</h4></div>
+        <div id="prepared-div" align="center">
+            <div class="container">
+                <form id="puser-query-form">
+                    <div class="form-group">
+                        <label for="pusername-input">Username</label>
+                        <input type="text" class="form-control" id="pusername-input" aria-describedby="pusernameHelp" placeholder="Username">
+                        <small id="pusernameHelp" class="form-text text-muted">Username</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="ppassword-input">Password</label>
+                        <input type="text" class="form-control" id="ppassword-input" aria-describedby="ppasswordHelp" placeholder="Password">
+                        <small id="passwordHelp" class="form-text text-muted">Password</small>
+                    </div>
+                    <div class="submit-button" align="center"><button type="button" class="btn btn-primary" onclick="getPrepared()">Get User</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="lib/axios/dist/axios.standalone.js"></script>
+    <script type="text/javascript" src="lib/CryptoJS/rollups/hmac-sha256.js"></script>
+    <script type="text/javascript" src="lib/CryptoJS/rollups/sha256.js"></script>
+    <script type="text/javascript" src="lib/CryptoJS/components/hmac.js"></script>
+    <script type="text/javascript" src="lib/CryptoJS/components/enc-base64.js"></script>
+    <script type="text/javascript" src="lib/url-template/url-template.js"></script>
+    <script type="text/javascript" src="lib/apiGatewayCore/sigV4Client.js"></script>
+    <script type="text/javascript" src="lib/apiGatewayCore/apiGatewayClient.js"></script>
+    <script type="text/javascript" src="lib/apiGatewayCore/simpleHttpClient.js"></script>
+    <script type="text/javascript" src="lib/apiGatewayCore/utils.js"></script>
+    <script type="text/javascript" src="apigClient.js"></script>
+    <script type="text/javascript" src="indexscript.js"></script>
+</body>

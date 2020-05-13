@@ -1,0 +1,25 @@
+* {
+    font-family: 'Comfortaa';
+}
+.header {
+    padding: 100px;
+    text-align: center;
+    background: #007bff;
+    color: white;
+}
+#second-section, #fourth-section {
+    background-color: #DCDCDC;
+}
+#greeting {
+    margin-top: 50px;
+}
+.carousel-item {
+    background-color: #A6A6A6;
+    height: 500px;
+}
+.slide-text {
+    font-size: 20px;
+}
+#carousel-section, #first-section, #second-section, #third-section, #fourth-section {
+    padding: 50px;
+}
